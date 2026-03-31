@@ -7,8 +7,9 @@ import com.google.gson.JsonParser;
 import com.staffchat.StaffChat;
 import com.staffchat.config.StaffChatConfig;
 import com.staffchat.permission.PermissionChecker;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Server;
-import org.bukkit.ChatColor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -170,7 +171,7 @@ public class DiscordWebhookListener implements Runnable {
          */
         private void broadcastToStaffChat(String authorName, String message) {
             try {
-                String formattedMessage = formatDiscordMessage(authorName, message);
+                Component formattedMessage = formatDiscordMessage(authorName, message);
 
                 server.getOnlinePlayers().forEach(player -> {
                     if (PermissionChecker.hasPermission(player, StaffChatConfig.getPermissionNode())) {
@@ -188,9 +189,10 @@ public class DiscordWebhookListener implements Runnable {
         /**
          * Format Discord message for display in-game
          */
-        private String formatDiscordMessage(String authorName, String message) {
-            String prefix = ChatColor.translateAlternateColorCodes('&', StaffChatConfig.getMessagePrefix());
-            return prefix + "[Discord] " + authorName + ": " + message;
+        private Component formatDiscordMessage(String authorName, String message) {
+            String prefix = StaffChatConfig.getMessagePrefix();
+            return LegacyComponentSerializer.legacyAmpersand()
+                    .deserialize(prefix + "[Discord] " + authorName + ": " + message);
         }
     }
 }

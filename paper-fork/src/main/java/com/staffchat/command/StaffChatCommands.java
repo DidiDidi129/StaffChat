@@ -1,11 +1,13 @@
 package com.staffchat.command;
 
-import com.staffchat.StaffChat;
 import com.staffchat.config.StaffChatConfig;
 import com.staffchat.discord.DiscordWebhookHandler;
 import com.staffchat.permission.PermissionChecker;
 import com.staffchat.player.PlayerStateManager;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -60,14 +62,16 @@ public class StaffChatCommands implements CommandExecutor, TabCompleter {
      */
     private boolean handleStaffChat(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Usage: /" + (sender instanceof Player ? "staffchat" : "sc") + " <message>");
+            sender.sendMessage(Component.text("Usage: /" + (sender instanceof Player ? "staffchat" : "sc") + " <message>", NamedTextColor.RED));
             return true;
         }
 
         String message = String.join(" ", args);
 
         if (!(sender instanceof Player)) {
-            String formattedMessage = ChatColor.DARK_AQUA + "[Staff] " + ChatColor.RED + "[Console]" + ChatColor.RESET + " " + message;
+            Component formattedMessage = Component.text("[Staff] ", NamedTextColor.DARK_AQUA)
+                    .append(Component.text("[Console]", NamedTextColor.RED))
+                    .append(Component.text(" " + message));
 
             for (Player player : plugin.getServer().getOnlinePlayers()) {
                 if (PermissionChecker.hasPermission(player, StaffChatConfig.getPermissionNode())) {
@@ -83,12 +87,12 @@ public class StaffChatCommands implements CommandExecutor, TabCompleter {
 
         // Check permission
         if (!PermissionChecker.hasPermission(player, StaffChatConfig.getPermissionNode())) {
-            player.sendMessage(ChatColor.RED + "You do not have permission to use staff chat");
+            player.sendMessage(Component.text("You do not have permission to use staff chat", NamedTextColor.RED));
             return true;
         }
 
         // Format and send the message
-        String formattedMessage = formatMessage(player.getName(), message);
+        Component formattedMessage = formatMessage(player.getName(), message);
 
         // Send message to all players with permission
         for (Player p : plugin.getServer().getOnlinePlayers()) {
@@ -108,12 +112,12 @@ public class StaffChatCommands implements CommandExecutor, TabCompleter {
      */
     private boolean handleChat(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be executed by players");
+            sender.sendMessage(Component.text("This command can only be executed by players", NamedTextColor.RED));
             return true;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Usage: /chat <normal|staff>");
+            sender.sendMessage(Component.text("Usage: /chat <normal|staff>", NamedTextColor.RED));
             return true;
         }
 
@@ -126,7 +130,7 @@ public class StaffChatCommands implements CommandExecutor, TabCompleter {
             case "staff":
                 return handleChatMode(player, PlayerStateManager.PlayerChatMode.STAFF);
             default:
-                player.sendMessage(ChatColor.RED + "Invalid chat mode. Use 'normal' or 'staff'");
+                player.sendMessage(Component.text("Invalid chat mode. Use 'normal' or 'staff'", NamedTextColor.RED));
                 return true;
         }
     }
@@ -142,28 +146,27 @@ public class StaffChatCommands implements CommandExecutor, TabCompleter {
             // Check if player has staff chat permission first
             if (!PermissionChecker.hasPermission(player, StaffChatConfig.getPermissionNode())) {
                 PlayerStateManager.setChatMode(player, PlayerStateManager.PlayerChatMode.NORMAL);
-                player.sendMessage(ChatColor.RED + "You do not have permission to use staff chat");
+                player.sendMessage(Component.text("You do not have permission to use staff chat", NamedTextColor.RED));
                 return true;
             }
-            player.sendMessage(ChatColor.DARK_AQUA + ChatColor.BOLD + "You are now speaking in Staff chat. " + 
-                             ChatColor.RESET + ChatColor.DARK_AQUA + "To switch back to normal, do " + 
-                             ChatColor.BOLD + "/chat normal");
+            player.sendMessage(Component.text("You are now speaking in Staff chat. ", NamedTextColor.DARK_AQUA, TextDecoration.BOLD)
+                    .append(Component.text("To switch back to normal, do ", NamedTextColor.DARK_AQUA).decoration(TextDecoration.BOLD, false))
+                    .append(Component.text("/chat normal", NamedTextColor.DARK_AQUA, TextDecoration.BOLD)));
         } else {
-            player.sendMessage(ChatColor.AQUA + ChatColor.BOLD + "You are now speaking in Normal chat. " + 
-                             ChatColor.RESET + ChatColor.AQUA + "To switch to staff chat, do " + 
-                             ChatColor.BOLD + "/chat staff");
+            player.sendMessage(Component.text("You are now speaking in Normal chat. ", NamedTextColor.AQUA, TextDecoration.BOLD)
+                    .append(Component.text("To switch to staff chat, do ", NamedTextColor.AQUA).decoration(TextDecoration.BOLD, false))
+                    .append(Component.text("/chat staff", NamedTextColor.AQUA, TextDecoration.BOLD)));
         }
 
         return true;
     }
 
     /**
-     * Format staff chat message
+     * Format staff chat message using legacy ampersand color codes from config
      */
-    private String formatMessage(String playerName, String message) {
-        // Convert & color codes to ChatColor
-        String prefix = ChatColor.translateAlternateColorCodes('&', StaffChatConfig.getMessagePrefix());
-        return prefix + playerName + ": " + message;
+    private Component formatMessage(String playerName, String message) {
+        String prefix = StaffChatConfig.getMessagePrefix();
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + playerName + ": " + message);
     }
 
     @Override

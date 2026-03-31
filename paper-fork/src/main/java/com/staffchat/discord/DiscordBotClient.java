@@ -1,6 +1,6 @@
 package com.staffchat.discord;
 
-import com.staffchat.Staffchat;
+import com.staffchat.StaffChat;
 import com.staffchat.permission.PermissionChecker;
 import com.staffchat.config.StaffChatConfig;
 import net.dv8tion.jda.api.JDA;
@@ -11,8 +11,10 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Text;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Server;
+import org.bukkit.entity.Player;
 
 /**
  * Discord bot client for two-way staff chat integration
@@ -27,7 +29,7 @@ public class DiscordBotClient {
      */
     public void start() {
         if (running) {
-            Staffchat.LOGGER.warn("Discord bot is already running");
+            StaffChat.LOGGER.warn("Discord bot is already running");
             return;
         }
 
@@ -35,7 +37,7 @@ public class DiscordBotClient {
         String channelId = StaffChatConfig.getDiscordStaffChannelId();
 
         if (token.isEmpty() || channelId.isEmpty()) {
-            Staffchat.LOGGER.warn("Discord bot token or channel ID not configured");
+            StaffChat.LOGGER.warn("Discord bot token or channel ID not configured");
             return;
         }
 
@@ -50,20 +52,20 @@ public class DiscordBotClient {
 
             staffChannel = jda.getTextChannelById(channelId);
             if (staffChannel == null) {
-                Staffchat.LOGGER.error("Could not find Discord channel with ID: " + channelId);
+                StaffChat.LOGGER.error("Could not find Discord channel with ID: " + channelId);
                 jda.shutdown();
                 return;
             }
 
             running = true;
-            Staffchat.LOGGER.info("Discord bot started successfully");
+            StaffChat.LOGGER.info("Discord bot started successfully");
         } catch (IllegalArgumentException e) {
-            Staffchat.LOGGER.error("Failed to login to Discord: " + e.getMessage());
+            StaffChat.LOGGER.error("Failed to login to Discord: " + e.getMessage());
         } catch (InterruptedException e) {
-            Staffchat.LOGGER.error("Discord bot startup interrupted");
+            StaffChat.LOGGER.error("Discord bot startup interrupted");
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            Staffchat.LOGGER.error("Unexpected error starting Discord bot: " + e.getMessage(), e);
+            StaffChat.LOGGER.error("Unexpected error starting Discord bot: " + e.getMessage(), e);
         }
     }
 
@@ -80,7 +82,7 @@ public class DiscordBotClient {
         }
 
         running = false;
-        Staffchat.LOGGER.info("Discord bot stopped");
+        StaffChat.LOGGER.info("Discord bot stopped");
     }
 
     /**
@@ -160,16 +162,17 @@ public class DiscordBotClient {
             }
 
             // Send to in-game staff chat
-            MinecraftServer server = Staffchat.getServer();
+            Server server = StaffChat.getInstance().getServer();
             if (server != null) {
                 String formattedMessage = "§9[Staff] §r§b[Discord]§r " + displayName + "§r: " + replyInfo + content;
-                server.getPlayerManager().getPlayerList().forEach(p -> {
+                Component component = LegacyComponentSerializer.legacySection().deserialize(formattedMessage);
+                for (Player p : server.getOnlinePlayers()) {
                     if (PermissionChecker.hasPermission(p, StaffChatConfig.getPermissionNode())) {
-                        p.sendMessage(Text.literal(formattedMessage), false);
+                        p.sendMessage(component);
                     }
-                });
+                }
             } else {
-                Staffchat.LOGGER.warn("Server reference not available for Discord message relay");
+                StaffChat.LOGGER.warn("Server reference not available for Discord message relay");
             }
         }
     }

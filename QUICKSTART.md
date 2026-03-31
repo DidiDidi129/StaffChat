@@ -3,13 +3,12 @@
 ## Installation Steps
 
 ### 1. Prerequisites
-- Minecraft Server running Fabric 1.21.11
-- Fabric Loader 0.18.4 or higher
-- LuckPerms mod installed on your server
+- Minecraft Paper server running Minecraft 26.1 or later
+- LuckPerms plugin installed on your server
 
-### 2. Install the Mod
+### 2. Install the Plugin
 1. Download the `staffchat-1.0.0.jar` file
-2. Place it in your server's `mods` folder
+2. Place it in your server's `plugins` folder
 3. Restart the server
 
 ### 3. Configuration
@@ -157,7 +156,7 @@ Example custom prefix:
 **Solution:**
 1. Install LuckPerms on your server if not already installed
 2. Download from: https://luckperms.net/download
-3. Place the JAR in your `plugins` or `mods` folder (depending on your server type)
+3. Place the JAR in your `plugins` folder
 4. Restart the server
 
 ### Configuration not applying

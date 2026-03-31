@@ -1,6 +1,6 @@
-# StaffChat Mod - Fabric 1.21.11
+# StaffChat Mod - Minecraft 26.1+
 
-A Fabric mod for Minecraft 1.21.11 that adds a staff chat feature with LuckPerms integration and Discord webhook support.
+A Paper plugin for Minecraft 26.1+ that adds a staff chat feature with LuckPerms integration and Discord webhook support. The plugin is designed to work with Minecraft 26.1 and future versions without requiring version-specific code changes.
 
 ## Features
 
@@ -12,14 +12,14 @@ A Fabric mod for Minecraft 1.21.11 that adds a staff chat feature with LuckPerms
 
 ## Requirements
 
-- **Minecraft 1.21.11**
-- **Fabric Loader** (0.18.4+)
-- **Fabric API** (0.141.2+)
+- **Minecraft 26.1+** (Paper server)
+- **Paper 26.1+**
 - **LuckPerms** (required for permission checks)
+- **Java 21+**
 
 ## Installation
 
-1. Place the compiled JAR file in your `mods` folder
+1. Place the compiled JAR file in your `plugins` folder
 2. Ensure you have LuckPerms installed on your server
 3. Start the server - a default config file will be created at `config/staffchat/config.json`
 
@@ -134,7 +134,7 @@ The mod supports Minecraft color codes using the `&` character:
 
 ## Compilation
 
-To compile the mod:
+To compile the plugin:
 
 ```bash
 ./gradlew build
@@ -144,13 +144,12 @@ The compiled JAR will be in `build/libs/`
 
 ## Building from Source
 
-1. Clone or download the mod source
+1. Clone or download the plugin source
 2. Run `./gradlew build`
 3. Find the compiled JAR in `build/libs/staffchat-<version>.jar`
 
 ## Dependencies
 
-- **Fabric API**: Provides core Fabric utilities
 - **LuckPerms API**: For permission management
 - **Gson**: For JSON configuration and Discord webhook payloads
 

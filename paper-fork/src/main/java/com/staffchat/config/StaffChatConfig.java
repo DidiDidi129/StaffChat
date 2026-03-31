@@ -2,7 +2,7 @@ package com.staffchat.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.staffchat.Staffchat;
+import com.staffchat.StaffChat;
 
 import java.io.File;
 import java.io.FileReader;
@@ -54,9 +54,9 @@ public class StaffChatConfig {
                 loadExistingConfig();
             }
 
-            Staffchat.LOGGER.info("StaffChat configuration loaded successfully");
+            StaffChat.LOGGER.info("StaffChat configuration loaded successfully");
         } catch (IOException e) {
-            Staffchat.LOGGER.error("Failed to load StaffChat configuration", e);
+            StaffChat.LOGGER.error("Failed to load StaffChat configuration", e);
             config = new Config();
         }
     }
@@ -72,7 +72,7 @@ public class StaffChatConfig {
             GSON.toJson(config, writer);
         }
 
-        Staffchat.LOGGER.info("Created default StaffChat configuration at " + CONFIG_FILE.toAbsolutePath());
+        StaffChat.LOGGER.info("Created default StaffChat configuration at " + CONFIG_FILE.toAbsolutePath());
     }
 
     /**
@@ -97,7 +97,7 @@ public class StaffChatConfig {
                 GSON.toJson(config, writer);
             }
         } catch (IOException e) {
-            Staffchat.LOGGER.error("Failed to save StaffChat configuration", e);
+            StaffChat.LOGGER.error("Failed to save StaffChat configuration", e);
         }
     }
 

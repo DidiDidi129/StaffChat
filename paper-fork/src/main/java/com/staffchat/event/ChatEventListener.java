@@ -5,11 +5,14 @@ import com.staffchat.config.StaffChatConfig;
 import com.staffchat.discord.DiscordWebhookHandler;
 import com.staffchat.permission.PermissionChecker;
 import com.staffchat.player.PlayerStateManager;
-import org.bukkit.ChatColor;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 /**
  * Handles chat message interception and routing based on player's chat mode
@@ -20,7 +23,7 @@ public class ChatEventListener implements Listener {
      * Handle async player chat events
      */
     @EventHandler
-    public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+    public void onAsyncChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         
         // Check if the player is in staff chat mode
@@ -28,17 +31,18 @@ public class ChatEventListener implements Listener {
             // Check if player has staff chat permission
             if (!PermissionChecker.hasPermission(player, StaffChatConfig.getPermissionNode())) {
                 // Send error and cancel the message
-                player.sendMessage(ChatColor.RED + "You do not have permission to use staff chat");
+                player.sendMessage(Component.text("You do not have permission to use staff chat", NamedTextColor.RED));
                 event.setCancelled(true);
                 return;
             }
 
-            // Get the message content
-            String messageContent = event.getMessage();
+            // Get the message content as plain text
+            String messageContent = PlainTextComponentSerializer.plainText().serialize(event.message());
 
-            // Format the message
-            String prefix = ChatColor.translateAlternateColorCodes('&', StaffChatConfig.getMessagePrefix());
-            String formattedMessage = prefix + player.getName() + ": " + messageContent;
+            // Format the message using legacy ampersand color codes from config
+            String prefix = StaffChatConfig.getMessagePrefix();
+            Component formattedMessage = LegacyComponentSerializer.legacyAmpersand()
+                    .deserialize(prefix + player.getName() + ": " + messageContent);
 
             // Send to all players with permission
             for (Player p : StaffChat.getInstance().getServer().getOnlinePlayers()) {

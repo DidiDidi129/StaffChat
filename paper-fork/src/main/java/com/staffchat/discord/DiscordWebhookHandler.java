@@ -1,7 +1,7 @@
 package com.staffchat.discord;
 
 import com.google.gson.JsonObject;
-import com.staffchat.Staffchat;
+import com.staffchat.StaffChat;
 import com.staffchat.config.StaffChatConfig;
 
 import java.io.IOException;
@@ -30,17 +30,17 @@ public class DiscordWebhookHandler {
         // Prefer bot if enabled
         if (StaffChatConfig.isDiscordBotEnabled() && botClient != null) {
             botClient.sendMessage(playerName, message);
-            Staffchat.LOGGER.debug("Sent message via Discord bot from: " + playerName);
+            StaffChat.LOGGER.debug("Sent message via Discord bot from: " + playerName);
             return;
         }
 
         // Fall back to webhook if bot is not enabled
         if (!StaffChatConfig.isDiscordWebhookEnabled()) {
-            Staffchat.LOGGER.debug("Discord bot and webhook both disabled; message not sent");
+            StaffChat.LOGGER.debug("Discord bot and webhook both disabled; message not sent");
             return;
         }
 
-        Staffchat.LOGGER.debug("Sending message via Discord webhook from: " + playerName);
+        StaffChat.LOGGER.debug("Sending message via Discord webhook from: " + playerName);
         // Send asynchronously to avoid blocking the server thread
         new Thread(() -> sendMessageAsync(playerName, message)).start();
     }
@@ -53,7 +53,7 @@ public class DiscordWebhookHandler {
             String webhookUrl = StaffChatConfig.getDiscordWebhookUrl();
 
             if (webhookUrl == null || webhookUrl.isEmpty()) {
-                Staffchat.LOGGER.warn("Discord webhook URL is not configured");
+                StaffChat.LOGGER.warn("Discord webhook URL is not configured");
                 return;
             }
 
@@ -73,7 +73,7 @@ public class DiscordWebhookHandler {
             payload.addProperty("content", formattedContent);
 
             String jsonPayload = payload.toString();
-            Staffchat.LOGGER.debug("Sending to Discord webhook: " + jsonPayload);
+            StaffChat.LOGGER.debug("Sending to Discord webhook: " + jsonPayload);
 
             // Send the webhook
             try (OutputStream os = connection.getOutputStream()) {
@@ -87,17 +87,17 @@ public class DiscordWebhookHandler {
             String responseMessage = connection.getResponseMessage();
 
             if (responseCode >= 200 && responseCode < 300) {
-                Staffchat.LOGGER.info("Successfully sent message to Discord webhook (HTTP " + responseCode + ")");
+                StaffChat.LOGGER.info("Successfully sent message to Discord webhook (HTTP " + responseCode + ")");
             } else {
-                Staffchat.LOGGER.warn("Discord webhook returned status code: " + responseCode + " " + responseMessage);
+                StaffChat.LOGGER.warn("Discord webhook returned status code: " + responseCode + " " + responseMessage);
             }
 
             connection.disconnect();
 
         } catch (IOException e) {
-            Staffchat.LOGGER.error("Failed to send message to Discord webhook: " + e.getMessage(), e);
+            StaffChat.LOGGER.error("Failed to send message to Discord webhook: " + e.getMessage(), e);
         } catch (Exception e) {
-            Staffchat.LOGGER.error("Unexpected error sending to Discord webhook", e);
+            StaffChat.LOGGER.error("Unexpected error sending to Discord webhook", e);
         }
     }
 

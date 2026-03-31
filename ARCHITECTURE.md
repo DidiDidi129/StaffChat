@@ -2,16 +2,16 @@
 
 ## Project Overview
 
-The StaffChat mod is a Fabric 1.21.11 mod that provides staff-only chat functionality with permission management via LuckPerms and optional Discord webhook integration.
+The StaffChat plugin is a Paper 26.1+ plugin that provides staff-only chat functionality with permission management via LuckPerms and optional Discord webhook integration. It is designed to work with Minecraft 26.1 and future versions without requiring version-specific changes.
 
 ## Directory Structure
 
 ```
-staffchat-template-1.21.11/
+staffchat/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/staffchat/
-│   │   │   ├── Staffchat.java                 # Main mod entry point
+│   │   │   ├── Staffchat.java                 # Main mod entry point (Fabric)
 │   │   │   ├── config/
 │   │   │   │   └── StaffChatConfig.java       # Configuration management
 │   │   │   ├── permission/
@@ -21,12 +21,21 @@ staffchat-template-1.21.11/
 │   │   │   └── discord/
 │   │   │       └── DiscordWebhookHandler.java # Discord webhook integration
 │   │   └── resources/
-│   │       ├── fabric.mod.json                # Mod manifest
-│   │       ├── staffchat.mixins.json          # Mixin configuration
+│   │       ├── fabric.mod.json                # Mod manifest (Fabric)
+│   │       ├── plugin.yml                     # Plugin manifest (Paper)
 │   │       └── assets/
 │   └── client/
 │       └── java/com/staffchat/
-│           └── StaffchatClient.java           # Client-side initialization
+│           └── StaffchatClient.java           # Client-side initialization (Fabric)
+├── paper-fork/                                 # Paper plugin variant
+│   └── src/main/java/com/staffchat/
+│       ├── StaffChat.java                     # Main plugin entry point
+│       ├── command/StaffChatCommands.java
+│       ├── config/StaffChatConfig.java
+│       ├── discord/
+│       ├── event/ChatEventListener.java
+│       ├── permission/PermissionChecker.java
+│       └── player/PlayerStateManager.java
 ├── gradle/
 ├── build.gradle                                # Build configuration
 ├── gradle.properties                           # Version and dependency info
@@ -208,28 +217,27 @@ Staffchat.onInitialize()
 ## Dependencies
 
 ### Build Dependencies
-- **Minecraft 1.21.11** - Game library
-- **Fabric API 0.141.2+1.21.11** - Fabric utilities
-- **Yarn Mappings 1.21.11+build.4** - Deobfuscation mappings
+- **Minecraft 26.1+** - Game library (Paper API)
 - **LuckPerms API 5.4** - Permission management
 - **Gson 2.10.1** - JSON handling
+- **Adventure API** - Bundled with Paper 26.1+
 
 ### Runtime Dependencies
-- **LuckPerms Mod** - Required for permission checks
-- **Fabric Loader 0.18.4+** - Mod loading
+- **LuckPerms Plugin** - Required for permission checks
+- **Paper 26.1+** - Server software
 - **Java 21** - Runtime environment
 
 ## Build System
 
-**Build Tool:** Gradle with Fabric Loom
+**Build Tool:** Gradle with Shadow plugin
 
 **Key Tasks:**
-- `./gradlew build` - Full build (compile, jar, remap)
+- `./gradlew build` - Full build (compile, create fat jar)
 - `./gradlew clean` - Clean build artifacts
-- `./gradlew remapJar` - Remap JAR to Yarn mappings
+- `./gradlew shadowJar` - Create shaded/fat JAR
 
 **Output:**
-- `build/libs/staffchat-1.0.0.jar` - Compiled mod JAR
+- `build/libs/staffchat-1.0.0.jar` - Compiled plugin JAR
 - `build/libs/staffchat-1.0.0-sources.jar` - Source code JAR
 
 ## Configuration Loading
@@ -286,14 +294,14 @@ The code is designed for easy extension:
 
 ## Compilation Notes
 
-### Yarn Mappings
-The project uses Yarn mappings for Fabric, which provides human-readable method and field names compared to obfuscated Minecraft code.
+### Core APIs Used
 
-### Remapping
-Gradle automatically handles remapping:
-- Source code uses Yarn names (readable)
-- Built JAR remaps to Yarn intermediary format
-- Server deobfuscates using mapping files
+The plugin uses the Paper/Adventure API stack that is stable across Minecraft versions:
+- **Adventure API** (`net.kyori.adventure`) - Text and component handling (bundled with Paper)
+- **Bukkit/Paper API** - Server and player interaction
+- **LuckPerms API** - Permission checks
+
+By avoiding deprecated APIs (such as `ChatColor` and `AsyncPlayerChatEvent`) and using the stable Adventure component API, the plugin is designed to be compatible with future Minecraft and Paper versions.
 
 ### Java Version
 - **Compilation:** Java 21

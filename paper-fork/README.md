@@ -1,6 +1,6 @@
 # StaffChat Paper Plugin
 
-This is a Paper 1.21.1 fork of the original Fabric StaffChat mod. This version has been converted from Fabric to Paper/Bukkit APIs while maintaining all the original functionality.
+This is a Paper 26.1+ plugin that provides staff-only chat functionality. It is designed to work with Minecraft 26.1 and future versions by using the stable Paper Adventure API rather than deprecated interfaces.
 
 ## Features
 
@@ -9,7 +9,7 @@ This is a Paper 1.21.1 fork of the original Fabric StaffChat mod. This version h
 - Discord webhook support for two-way communication
 - Discord bot integration (optional)
 - Chat mode switching (/chat normal/staff)
-- Color code support in messages
+- Color code support in messages (uses Adventure component API)
 
 ## Commands
 
@@ -33,13 +33,13 @@ This is a Paper 1.21.1 fork of the original Fabric StaffChat mod. This version h
 The plugin will generate a configuration file where you can:
 - Enable/disable Discord webhook functionality
 - Configure Discord bot settings
-- Set custom message prefixes
+- Set custom message prefixes (using `&` color codes)
 - Configure permission nodes
 
 ## Dependencies
 
 - **LuckPerms** (required) - For permission management
-- **Paper 1.21.1** (required) - Server software
+- **Paper 26.1+** (required) - Server software
 
 ## Building
 
@@ -52,16 +52,9 @@ cd paper-fork
 
 The built plugin JAR will be in `build/libs/`.
 
-## Differences from Fabric Version
+## Version Compatibility
 
-- Converted from Fabric ModInitializer to Bukkit JavaPlugin
-- Uses Bukkit command system instead of Fabric Brigadier
-- Uses Bukkit event system instead of Fabric event callbacks
-- Removed Fabric-specific mixins (not needed for Paper)
-- Updated all imports from Fabric to Bukkit APIs
-- Uses ChatColor instead of section signs for colors
-- Uses Bukkit Player instead of ServerPlayerEntity
-- Uses Bukkit Server instead of MinecraftServer
+This plugin targets Paper 26.1 as its minimum API version. By using stable Paper APIs (Adventure components, `AsyncChatEvent`) instead of deprecated interfaces, it should continue working in future Paper and Minecraft versions without code changes.
 
 ## License
 
