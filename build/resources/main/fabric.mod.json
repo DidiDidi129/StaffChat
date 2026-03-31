@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "staffchat",
+	"version": "1.0.0",
+	"name": "StaffChat",
+	"description": "A Fabric mod that adds a staff chat feature with LuckPerms integration and Discord webhook support. Includes commands /staffchat and /sc for restricted staff communication.",
+	"authors": [
+		"Your Name"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/yourusername/staffchat"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/staffchat/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.staffchat.Staffchat"
+		],
+		"client": [
+			"com.staffchat.StaffchatClient"
+		]
+	},
+	"mixins": [
+		"staffchat.mixins.json",
+		{
+			"config": "staffchat.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*",
+		"luckperms": "*"
+	},
+	"suggests": {
+		"discord-webhooks": "*"
+	}
+}

@@ -1,0 +1,10 @@
+{
+  "permissionNode": "staffchat.use",
+  "enableDiscordWebhook": false,
+  "discordWebhookUrl": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN",
+  "discordWebhookUsername": "Staff Chat",
+  "discordWebhookAvatarUrl": "",
+  "messagePrefix": "&9[Staff] &r",
+  "discordListenerPort": 3000,
+  "discordMessageFormat": "{user} >> {message}"
+}
