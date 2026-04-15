@@ -2,7 +2,7 @@ package com.staffchat.permission;
 
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +26,14 @@ public class PermissionChecker {
     /**
      * Check if a player has a specific permission
      */
-    public static boolean hasPermission(ServerPlayerEntity player, String permissionNode) {
+    public static boolean hasPermission(ServerPlayer player, String permissionNode) {
         if (luckPerms == null) {
             LOGGER.warn("LuckPerms not initialized, denying permission");
             return false;
         }
 
         try {
-            UUID playerUUID = player.getUuid();
+            UUID playerUUID = player.getUUID();
             User user = luckPerms.getUserManager().loadUser(playerUUID).join();
 
             if (user == null) {

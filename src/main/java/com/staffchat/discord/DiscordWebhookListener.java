@@ -7,8 +7,8 @@ import com.google.gson.JsonParser;
 import com.staffchat.Staffchat;
 import com.staffchat.config.StaffChatConfig;
 import com.staffchat.permission.PermissionChecker;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -172,9 +172,9 @@ public class DiscordWebhookListener implements Runnable {
             try {
                 String formattedMessage = formatDiscordMessage(authorName, message);
 
-                server.getPlayerManager().getPlayerList().forEach(player -> {
+                server.getPlayerList().getPlayers().forEach(player -> {
                     if (PermissionChecker.hasPermission(player, StaffChatConfig.getPermissionNode())) {
-                        player.sendMessage(Text.literal(formattedMessage), false);
+                        player.sendSystemMessage(Component.literal(formattedMessage));
                     }
                 });
 
