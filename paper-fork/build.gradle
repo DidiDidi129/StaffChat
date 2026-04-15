@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.4.1'
     id 'maven-publish'
 }
 
@@ -65,7 +65,7 @@ processResources {
 }
 
 shadowJar {
-    classifier = null
+    archiveClassifier.set('')
     relocate 'com.google.gson', 'staffchat.libs.gson'
     relocate 'net.dv8tion.jda', 'staffchat.libs.jda'
     relocate 'com.squareup.okhttp3', 'staffchat.libs.okhttp3'
@@ -80,7 +80,7 @@ shadowJar {
 build.dependsOn shadowJar
 
 jar {
-    classifier = 'original'
+    archiveClassifier.set('original')
 }
 
 publishing {
