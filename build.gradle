@@ -70,7 +70,7 @@ java {
 
 shadowJar {
 	configurations = [project.configurations.shade]
-	archiveClassifier.set('dev-shadow')
+	archiveClassifier.set('')
 
 	relocate 'com.google.gson', 'staffchat.libs.gson'
 	relocate 'net.dv8tion.jda', 'staffchat.libs.jda'
@@ -81,20 +81,18 @@ shadowJar {
 	relocate 'net.sf.trove4j', 'staffchat.libs.trove4j'
 	relocate 'com.fasterxml.jackson', 'staffchat.libs.jackson'
 	relocate 'org.apache.commons.collections4', 'staffchat.libs.commons'
-}
 
-// Make remapJar use the shadowed jar as input
-remapJar {
-	dependsOn shadowJar
-	inputFile = shadowJar.archiveFile
-}
-
-jar {
 	inputs.property "projectName", project.name
 
 	from("LICENSE") {
 		rename { "${it}_${project.name}" }
 	}
+}
+
+build.dependsOn shadowJar
+
+jar {
+	archiveClassifier.set('dev')
 }
 
 // configure the maven publication
