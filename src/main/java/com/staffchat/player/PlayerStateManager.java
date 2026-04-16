@@ -1,6 +1,6 @@
 package com.staffchat.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +30,8 @@ public class PlayerStateManager {
     /**
      * Get a player's current chat mode
      */
-    public static PlayerChatMode getChatMode(ServerPlayerEntity player) {
-        return playerChatModes.getOrDefault(player.getUuid(), PlayerChatMode.NORMAL);
+    public static PlayerChatMode getChatMode(ServerPlayer player) {
+        return playerChatModes.getOrDefault(player.getUUID(), PlayerChatMode.NORMAL);
     }
 
     /**
@@ -44,8 +44,8 @@ public class PlayerStateManager {
     /**
      * Set a player's chat mode
      */
-    public static void setChatMode(ServerPlayerEntity player, PlayerChatMode mode) {
-        playerChatModes.put(player.getUuid(), mode);
+    public static void setChatMode(ServerPlayer player, PlayerChatMode mode) {
+        playerChatModes.put(player.getUUID(), mode);
     }
 
     /**
@@ -58,8 +58,8 @@ public class PlayerStateManager {
     /**
      * Remove a player's chat mode (when they disconnect)
      */
-    public static void removePlayer(ServerPlayerEntity player) {
-        playerChatModes.remove(player.getUuid());
+    public static void removePlayer(ServerPlayer player) {
+        playerChatModes.remove(player.getUUID());
     }
 
     /**

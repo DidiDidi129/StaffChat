@@ -6,8 +6,8 @@ import com.staffchat.discord.DiscordWebhookHandler;
 import com.staffchat.permission.PermissionChecker;
 import com.staffchat.player.PlayerStateManager;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Text;
 
 /**
  * Handles chat message interception and routing based on player's chat mode
@@ -27,19 +27,19 @@ public class ChatEventListener {
      */
     public static void register() {
         // Listen to chat messages before they're broadcast and optionally block them
-        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> {
+        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, boundChatType) -> {
             // Check if the player is in staff chat mode
             if (PlayerStateManager.getChatMode(sender) == PlayerStateManager.PlayerChatMode.STAFF) {
                 // Check if player has staff chat permission
                 if (!PermissionChecker.hasPermission(sender, StaffChatConfig.getPermissionNode())) {
                     // Send error and cancel the message
-                    sender.sendMessage(Text.literal("§cYou do not have permission to use staff chat"), false);
+                    sender.sendSystemMessage(Component.literal("§cYou do not have permission to use staff chat"));
                     // Return false to block the original message from being broadcast to normal chat
                     return false;
                 }
 
-                // Get the message content from the Text object
-                String messageContent = message.getContent().getString();
+                // Get the message content from the PlayerChatMessage object
+                String messageContent = message.decoratedContent().getString();
 
                 // Format the message
                 String prefix = StaffChatConfig.getMessagePrefix().replace("&", "§");
@@ -49,9 +49,9 @@ public class ChatEventListener {
                 MinecraftServer server = cachedServer;
                 if (server != null) {
                     // Send to all players with permission
-                    server.getPlayerManager().getPlayerList().forEach(p -> {
+                    server.getPlayerList().getPlayers().forEach(p -> {
                         if (PermissionChecker.hasPermission(p, StaffChatConfig.getPermissionNode())) {
-                            p.sendMessage(Text.literal(formattedMessage), false);
+                            p.sendSystemMessage(Component.literal(formattedMessage));
                         }
                     });
 

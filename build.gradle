@@ -1,92 +1,105 @@
 plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'maven-publish'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'com.gradleup.shadow' version '9.0.0'
+	id 'maven-publish'
 }
 
-group = project.maven_group
 version = project.mod_version
-description = 'StaffChat plugin for Paper servers'
+group = project.maven_group
 
 repositories {
-    mavenCentral()
-    maven {
-        name = "PaperMC"
-        url = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven {
-        name = "LuckPerms"
-        url = "https://repo.lucko.me/"
-    }
-    maven {
-        name = "Sonatype Snapshots"
-        url = "https://oss.sonatype.org/content/repositories/snapshots"
-    }
+	mavenCentral()
+}
+
+// Create a configuration for JDA and its dependencies that will be shadowed
+configurations {
+	shade
+	implementation.extendsFrom shade
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"staffchat" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
 }
 
 dependencies {
-    // Paper API
-    compileOnly "io.papermc.paper:paper-api:${project.paper_version}"
-    
-    // LuckPerms API
-    compileOnly "net.luckperms:api:5.4"
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-    // HTTP Client for Discord webhooks
-    implementation "com.google.code.gson:gson:2.10.1"
-    
-    // Discord bot (JDA)
-    implementation "net.dv8tion:JDA:5.2.1"
-    // JDA's dependencies are included transitively
-}
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-def targetJavaVersion = 21
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
+	// Fabric API
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-tasks.withType(JavaCompile).configureEach {
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release = targetJavaVersion
-    }
+	// LuckPerms API (provided at runtime by the LuckPerms mod)
+	compileOnly "net.luckperms:api:5.4"
+
+	// Discord bot (JDA) - shadowed into the jar
+	shade("net.dv8tion:JDA:5.2.1") {
+		exclude module: 'opus-java'
+	}
+
+	// Gson - shadowed into the jar
+	shade "com.google.code.gson:gson:2.10.1"
 }
 
 processResources {
-    def props = [version: version]
-    inputs.properties props
-    filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand props
-    }
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": inputs.properties.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 shadowJar {
-    classifier = null
-    relocate 'com.google.gson', 'staffchat.libs.gson'
-    relocate 'net.dv8tion.jda', 'staffchat.libs.jda'
-    relocate 'com.squareup.okhttp3', 'staffchat.libs.okhttp3'
-    relocate 'com.squareup.okio', 'staffchat.libs.okio'
-    relocate 'org.jetbrains.kotlin', 'staffchat.libs.kotlin'
-    relocate 'com.neovisionaries', 'staffchat.libs.nv'
-    relocate 'net.sf.trove4j', 'staffchat.libs.trove4j'
-    relocate 'com.fasterxml.jackson', 'staffchat.libs.jackson'
-    relocate 'org.apache.commons.collections4', 'staffchat.libs.commons'
+	configurations = [project.configurations.shade]
+	archiveClassifier.set('')
+
+	relocate 'com.google.gson', 'staffchat.libs.gson'
+	relocate 'net.dv8tion.jda', 'staffchat.libs.jda'
+	relocate 'com.squareup.okhttp3', 'staffchat.libs.okhttp3'
+	relocate 'okio', 'staffchat.libs.okio'
+	relocate 'org.jetbrains.kotlin', 'staffchat.libs.kotlin'
+	relocate 'com.neovisionaries', 'staffchat.libs.nv'
+	relocate 'net.sf.trove4j', 'staffchat.libs.trove4j'
+	relocate 'com.fasterxml.jackson', 'staffchat.libs.jackson'
+	relocate 'org.apache.commons.collections4', 'staffchat.libs.commons'
+
+	inputs.property "projectName", project.name
+
+	from("LICENSE") {
+		rename { "${it}_${project.name}" }
+	}
 }
 
 build.dependsOn shadowJar
 
 jar {
-    classifier = 'original'
+	archiveClassifier.set('dev')
 }
 
+// configure the maven publication
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
 }
