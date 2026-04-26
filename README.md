@@ -1,6 +1,6 @@
-# StaffChat Mod - Fabric 1.21.11
+# StaffChat Mod
 
-A Fabric mod for Minecraft 1.21.11 that adds a staff chat feature with LuckPerms integration and Discord webhook support.
+A Fabric mod for Minecraft that adds a staff chat feature with LuckPerms integration and Discord bot support.
 
 ## Features
 
@@ -12,10 +12,10 @@ A Fabric mod for Minecraft 1.21.11 that adds a staff chat feature with LuckPerms
 
 ## Requirements
 
-- **Minecraft 1.21.11**
+- **Minecraft 1.21.11+**
 - **Fabric Loader** (0.18.4+)
 - **Fabric API** (0.141.2+)
-- **LuckPerms** (required for permission checks)
+- **LuckPerms**
 
 ## Installation
 
