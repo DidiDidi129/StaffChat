@@ -7,6 +7,7 @@ import com.staffchat.config.StaffChatConfig;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -57,7 +58,7 @@ public class DiscordWebhookHandler {
                 return;
             }
 
-            URL url = new URL(webhookUrl);
+            URL url = URI.create(webhookUrl).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
