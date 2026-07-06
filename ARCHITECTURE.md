@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-The StaffChat mod is a Fabric 1.21.11 mod that provides staff-only chat functionality with permission management via LuckPerms and optional Discord webhook integration.
+The StaffChat mod is a Fabric 26.2 mod that provides staff-only chat functionality with permission management via LuckPerms and optional Discord webhook integration.
 
 ## Directory Structure
 
 ```
-staffchat-template-1.21.11/
+staffchat-template-26.2/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/staffchat/
@@ -208,15 +208,15 @@ Staffchat.onInitialize()
 ## Dependencies
 
 ### Build Dependencies
-- **Minecraft 1.21.11** - Game library
-- **Fabric API 0.141.2+1.21.11** - Fabric utilities
-- **Yarn Mappings 1.21.11+build.4** - Deobfuscation mappings
+- **Minecraft 26.2** - Game library
+- **Fabric API 0.146.0+26.2** - Fabric utilities
+- **Yarn Mappings 26.2+build.4** - Deobfuscation mappings
 - **LuckPerms API 5.4** - Permission management
 - **Gson 2.10.1** - JSON handling
 
 ### Runtime Dependencies
 - **LuckPerms Mod** - Required for permission checks
-- **Fabric Loader 0.18.4+** - Mod loading
+- **Fabric Loader 0.18.7+** - Mod loading
 - **Java 21** - Runtime environment
 
 ## Build System

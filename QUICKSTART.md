@@ -3,8 +3,8 @@
 ## Installation Steps
 
 ### 1. Prerequisites
-- Minecraft Server running Fabric 1.21.11
-- Fabric Loader 0.18.4 or higher
+- Minecraft Server running Fabric 26.2
+- Fabric Loader 0.18.7 or higher
 - LuckPerms mod installed on your server
 
 ### 2. Install the Mod
