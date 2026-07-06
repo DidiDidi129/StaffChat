@@ -12,9 +12,9 @@ A Fabric mod for Minecraft that adds a staff chat feature with LuckPerms integra
 
 ## Requirements
 
-- **Minecraft 1.21.11+**
-- **Fabric Loader** (0.18.4+)
-- **Fabric API** (0.141.2+)
+- **Minecraft 26.2+**
+- **Fabric Loader** (0.18.7+)
+- **Fabric API** (0.146.0+)
 - **LuckPerms**
 
 ## Installation
